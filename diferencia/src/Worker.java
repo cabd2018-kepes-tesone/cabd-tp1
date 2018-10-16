@@ -33,6 +33,8 @@ public class Worker extends Configured implements Tool
 
         // configure Reducer
         job.setReducerClass(Reducer.class);
+
+        // configure output
         job.setOutputKeyClass(LongWritable.class);
         job.setOutputValueClass(NullWritable.class);
 

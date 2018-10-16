@@ -31,13 +31,17 @@ public class Worker extends Configured implements Tool
         job.setMapOutputKeyClass(LongWritable.class);
         job.setMapOutputValueClass(NullWritable.class);
 
+        // configure Combiner
+        job.setCombinerClass(Reducer.class)
+
         // configure Reducer
         job.setReducerClass(Reducer.class);
+
+        // configure output
         job.setOutputKeyClass(LongWritable.class);
         job.setOutputValueClass(NullWritable.class);
 
         // configure input and output formats
-        job.setNumReduceTasks(3);
         job.setInputFormatClass(TextInputFormat.class);
         job.setOutputFormatClass(TextOutputFormat.class);
 

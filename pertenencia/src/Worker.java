@@ -42,14 +42,14 @@ public class Worker extends Configured implements Tool
 
         // configure output folder
         FileSystem fs = FileSystem.get(conf);
-        String outputDir = "output";
+        String outputDir = args[2];
         if (fs.exists(new Path(outputDir))) {
             fs.delete(new Path(outputDir), true);
         }
 
         // configure Mappers
-        MultipleInputs.addInputPath(job, new Path("inputA"), TextInputFormat.class, AMapper.class);
-        MultipleInputs.addInputPath(job, new Path("inputE"), TextInputFormat.class, EMapper.class);
+        MultipleInputs.addInputPath(job, new Path(args[0]), TextInputFormat.class, AMapper.class);
+        MultipleInputs.addInputPath(job, new Path(args[1]), TextInputFormat.class, EMapper.class);
 
         FileOutputFormat.setOutputPath(job, new Path(outputDir));
 
