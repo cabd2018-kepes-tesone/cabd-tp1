@@ -1,11 +1,10 @@
-package pertenencia;
+package cardinalidad;
 
 import java.io.IOException;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
@@ -14,7 +13,6 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.Tool;
-import org.apache.hadoop.mapreduce.lib.input.MultipleInputs;
 
 public class Worker extends Configured implements Tool
 {
@@ -22,35 +20,43 @@ public class Worker extends Configured implements Tool
 
     private Job setupJob(String[] args) throws IOException
     {
-        Configuration conf = getConf();
+        return setupJob(args, getConf());
+    }
 
-        Job job = new Job(conf, "Complemento");
+    public Job setupJob(String[] args, Configuration conf) throws IOException
+    {
+        Job job = new Job(conf, "Cardinalidad");
 
         job.setJarByClass(Worker.class);
 
+        // configure Mapper
+        job.setMapperClass(Mapper.class);
         job.setMapOutputKeyClass(LongWritable.class);
-        job.setMapOutputValueClass(Text.class);
+        job.setMapOutputValueClass(LongWritable.class);
+
+        // configure Combiner
+        job.setCombinerClass(Reducer.class);
 
         // configure Reducer
         job.setReducerClass(Reducer.class);
+
+        // configure output
         job.setOutputKeyClass(LongWritable.class);
-        job.setOutputValueClass(Text.class);
+        job.setOutputValueClass(LongWritable.class);
 
         // configure input and output formats
         job.setInputFormatClass(TextInputFormat.class);
         job.setOutputFormatClass(TextOutputFormat.class);
 
-        // configure output folder
+        // configure input and output folders
         FileSystem fs = FileSystem.get(conf);
-        String outputDir = args[2];
+        String inputDir = args[0];
+        String outputDir = args[1];
         if (fs.exists(new Path(outputDir))) {
             fs.delete(new Path(outputDir), true);
         }
 
-        // configure Mappers
-        MultipleInputs.addInputPath(job, new Path(args[0]), TextInputFormat.class, AMapper.class);
-        MultipleInputs.addInputPath(job, new Path(args[1]), TextInputFormat.class, EMapper.class);
-
+        FileInputFormat.addInputPath(job, new Path(inputDir));
         FileOutputFormat.setOutputPath(job, new Path(outputDir));
 
         return job;

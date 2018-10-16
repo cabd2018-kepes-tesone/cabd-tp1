@@ -1,20 +1,12 @@
 #!/bin/bash
 
-if [ $# -ne 1 ]
+if [ -d bin ]
 then
-    echo 'Mandar el nombre del paquete .jar'
-    exit
+    rm -rf bin
 fi
 
-PAQUETE=$1
+mkdir bin
 
-if [ -d $PAQUETE/bin ]
-then
-    rm -rf $PAQUETE/bin
-fi
+javac src/*/*.java -classpath /home/hduser/jarHadoop/commons-cli-1.2.jar:/home/hduser/jarHadoop/hadoop-common-2.6.0.jar:/home/hduser/jarHadoop/hadoop-mapreduce-client-core-2.6.0.jar -d bin/
 
-mkdir $PAQUETE/bin
-
-javac $PAQUETE/src/*.java -classpath /home/hduser/jarHadoop/commons-cli-1.2.jar:/home/hduser/jarHadoop/hadoop-common-2.6.0.jar:/home/hduser/jarHadoop/hadoop-mapreduce-client-core-2.6.0.jar -d $PAQUETE/bin/
-
-jar -cvf ./$PAQUETE/bin/$PAQUETE.jar -C ./$PAQUETE/bin/ ./$PAQUETE
+jar -cvf ./bin/tp1.jar -C ./bin/ .

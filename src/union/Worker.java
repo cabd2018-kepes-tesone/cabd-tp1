@@ -32,7 +32,7 @@ public class Worker extends Configured implements Tool
         job.setMapOutputValueClass(NullWritable.class);
 
         // configure Combiner
-        job.setCombinerClass(Reducer.class)
+        job.setCombinerClass(Reducer.class);
 
         // configure Reducer
         job.setReducerClass(Reducer.class);
